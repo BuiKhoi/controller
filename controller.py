@@ -16,6 +16,9 @@ import logging
 import logging.handlers
 import json
 import atexit
+from robot_controller import RobotController
+
+robot = RobotController()
 
 if (sys.version_info > (3, 0)):
     import importlib
@@ -219,13 +222,20 @@ if ext_chat:
 # Functions
 
 def handle_message(ws, message):
-    log.debug(message)
-
+    global robot
     try:
         messageData = json.loads(message)
     except:
         log.error("Unable to parse message")
         return
+
+    try:
+        button_command = messageData['d']['button']['command']
+        # log.error(button_command)
+
+        robot.process_command(button_command)
+    except:
+        pass
 
 #    try:
     if "e" not in messageData:
